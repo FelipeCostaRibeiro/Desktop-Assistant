@@ -1,0 +1,8 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: fit-content;
+  z-index: var(--da-z-overlay);
+  will-change: transform;
+}
