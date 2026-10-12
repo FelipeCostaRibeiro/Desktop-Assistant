@@ -13,7 +13,7 @@ export function ChatBubble({ children, onClose, dragHandleProps }: ChatBubblePro
       <header className={styles.header}>
         <div className={styles.title}>
           <span className={styles.pulse} />
-          Assistente
+          DeskAI
         </div>
 
         {onClose && (

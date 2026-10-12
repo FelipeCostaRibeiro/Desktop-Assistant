@@ -44,7 +44,7 @@ export function useDragPosition(
       if (!element) return
 
       const rect = element.getBoundingClientRect()
-      const origin = position ?? { x: rect.left, y: rect.top }
+      const origin = position ?? { x: Math.round(rect.left), y: Math.round(rect.top) }
 
       draggingRef.current = true
       offsetRef.current = {
@@ -63,8 +63,8 @@ export function useDragPosition(
 
       setPosition(
         clampToViewport({
-          x: event.clientX - offsetRef.current.x,
-          y: event.clientY - offsetRef.current.y,
+          x: Math.round(event.clientX - offsetRef.current.x),
+          y: Math.round(event.clientY - offsetRef.current.y),
         }),
       )
     },
