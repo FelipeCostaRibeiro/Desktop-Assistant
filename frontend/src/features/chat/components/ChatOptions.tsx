@@ -6,7 +6,10 @@ type ChatOptionsProps = {
   onChange: (preferences: ChatPreferences) => void
 }
 
-export function ChatOptions({ preferences, onChange }: ChatOptionsProps) {
+export function ChatOptions({
+  preferences,
+  onChange,
+}: Readonly<ChatOptionsProps>) {
   return (
     <div className={styles.bar}>
       <button

@@ -7,13 +7,17 @@ type ChatBubbleProps = {
   dragHandleProps?: HTMLAttributes<HTMLDivElement>
 }
 
-export function ChatBubble({ children, onClose, dragHandleProps }: ChatBubbleProps) {
+export function ChatBubble({
+  children,
+  onClose,
+  dragHandleProps,
+}: Readonly<ChatBubbleProps>) {
   return (
     <div className={styles.bubble}>
       <header className={styles.header}>
         <div className={styles.title}>
           <span className={styles.pulse} />
-          DeskAI
+          <span>DeskAI</span>
         </div>
 
         {onClose && (

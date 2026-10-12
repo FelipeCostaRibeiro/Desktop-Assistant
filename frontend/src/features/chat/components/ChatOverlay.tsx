@@ -12,7 +12,7 @@ type ChatOverlayProps = {
 
 const OVERLAY_MARGIN = 24
 
-export function ChatOverlay({ onClose }: ChatOverlayProps) {
+export function ChatOverlay({ onClose }: Readonly<ChatOverlayProps>) {
   const containerRef = useRef<HTMLDivElement>(null)
   const { position, dragHandleProps } = useDragPosition(containerRef)
   const { messages, isThinking, send } = useChatController()

@@ -7,7 +7,11 @@ type ChatInputProps = {
   placeholder?: string
 }
 
-export function ChatInput({ onSend, disabled, placeholder }: ChatInputProps) {
+export function ChatInput({
+  onSend,
+  disabled,
+  placeholder,
+}: Readonly<ChatInputProps>) {
   const [value, setValue] = useState('')
 
   const submit = () => {

@@ -8,7 +8,10 @@ type MessageListProps = {
   isThinking: boolean
 }
 
-export function MessageList({ messages, isThinking }: MessageListProps) {
+export function MessageList({
+  messages,
+  isThinking,
+}: Readonly<MessageListProps>) {
   const endRef = useAutoScroll(messages.length + (isThinking ? 1 : 0))
 
   return (

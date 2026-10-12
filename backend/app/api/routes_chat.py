@@ -35,7 +35,7 @@ def build_messages(request: ChatRequest) -> list[dict[str, str]]:
     return messages
 
 
-@router.post("/chat", response_model=ChatResponse)
+@router.post("/chat", responses={502: {"description": "Falha na chamada da LLM"}})
 async def chat(request: ChatRequest) -> ChatResponse:
     messages = build_messages(request)
     try:

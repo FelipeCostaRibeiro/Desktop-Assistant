@@ -5,7 +5,7 @@ type MessageItemProps = {
   message: ChatMessage
 }
 
-export function MessageItem({ message }: MessageItemProps) {
+export function MessageItem({ message }: Readonly<MessageItemProps>) {
   const isUser = message.role === 'user'
 
   return (

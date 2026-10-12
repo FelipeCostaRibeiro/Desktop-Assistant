@@ -19,7 +19,7 @@
   background: var(--da-color-assistant);
   color: var(--da-color-text);
   white-space: pre-wrap;
-  word-break: break-word;
+  overflow-wrap: break-word;
   border-bottom-left-radius: 4px;
 }
 
