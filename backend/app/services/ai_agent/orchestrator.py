@@ -1,6 +1,6 @@
 import json
 from typing import Any, cast
-from models import (
+from .models import (
     MODEL_CHAT,
     get_client,
     CLASSIFICATION_TOOL,

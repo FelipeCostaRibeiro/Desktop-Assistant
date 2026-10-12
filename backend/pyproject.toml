@@ -1,0 +1,26 @@
+[project]
+name = "desktop-assistant-backend"
+version = "0.1.0"
+description = "Backend do Desktop Assistant: agente RAG e execução de terminal."
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi==0.143.0",
+  "uvicorn[standard]==0.54.0",
+  "langchain-openai==1.7.0",
+  "openai==3.28.0",
+  "pydantic==2.14.0",
+  "python-dotenv==1.2.4",
+]
+
+[project.optional-dependencies]
+dev = ["poethepoet"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+[tool.poe.tasks]
+backend = "uvicorn app.main:app --reload --port 8000"

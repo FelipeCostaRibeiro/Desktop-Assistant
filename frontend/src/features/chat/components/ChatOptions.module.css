@@ -1,0 +1,29 @@
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--da-color-border);
+  background: transparent;
+  color: var(--da-color-text-muted);
+  cursor: pointer;
+  transition: background var(--da-transition), color var(--da-transition),
+    border-color var(--da-transition);
+}
+
+.chip:hover {
+  color: var(--da-color-text);
+  border-color: var(--da-color-text-muted);
+}
+
+.chip[aria-pressed='true'] {
+  background: var(--da-color-accent-soft);
+  border-color: var(--da-color-accent);
+  color: var(--da-color-accent);
+}

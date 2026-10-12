@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Awaitable, Callable
 
-from terminal_policy import evaluate
+from .terminal_policy import evaluate
 
 Confirmer = Callable[[str, str | None], Awaitable[bool]]
 

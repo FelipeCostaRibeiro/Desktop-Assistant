@@ -1,0 +1,46 @@
+:root {
+  --da-font-sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --da-font-mono: ui-monospace, Consolas, monospace;
+
+  --da-z-overlay: 2147483000;
+
+  --da-color-surface: #ffffff;
+  --da-color-surface-2: #f5f4f8;
+  --da-color-text: #1b1a22;
+  --da-color-text-muted: #6b6375;
+  --da-color-border: #e5e4e7;
+  --da-color-accent: #3ab7ed;
+  --da-color-accent-soft: rgba(58, 183, 237, 0.14);
+  --da-color-user: #3ab7ed;
+  --da-color-user-text: #ffffff;
+  --da-color-assistant: #f1f0f5;
+
+  --da-radius-sm: 8px;
+  --da-radius-md: 12px;
+  --da-radius-lg: 18px;
+
+  --da-shadow-overlay:
+    0 20px 45px -12px rgba(20, 15, 40, 0.35),
+    0 8px 18px -8px rgba(20, 15, 40, 0.25);
+
+  --da-transition: 160ms ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --da-color-surface: #1c1d24;
+    --da-color-surface-2: #24252e;
+    --da-color-text: #f3f4f6;
+    --da-color-text-muted: #9ca3af;
+    --da-color-border: #2e303a;
+    --da-color-accent: #6cc9f2;
+    --da-color-accent-soft: rgba(108, 201, 242, 0.18);
+    --da-color-user: #3ab7ed;
+    --da-color-user-text: #ffffff;
+    --da-color-assistant: #2a2b34;
+
+    --da-shadow-overlay:
+      0 20px 45px -12px rgba(0, 0, 0, 0.6),
+      0 8px 18px -8px rgba(0, 0, 0, 0.5);
+  }
+}
