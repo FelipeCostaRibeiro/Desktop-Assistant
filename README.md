@@ -1,8 +1,8 @@
 <div align="center">
 
-# 🖥️ Desktop Assistant
+# 🖥️ DeskAI Chatbot
 
-**Assistente de IA com raciocínio adaptativo e execução segura de comandos no terminal.**
+**Assistente de IA com raciocínio adaptativo e execução segura de comandos no terminal, para ajudar a realizar tarefas e comandos no ambiente desktop**
 
 ![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow?style=for-the-badge)
 
@@ -16,12 +16,12 @@
 
 ## 📌 Sobre o projeto
 
-O **Desktop Assistant** é um assistente de IA pensado para rodar no desktop e ajudar o usuário em tarefas do dia a dia, inclusive executando comandos no terminal por conta própria, com camadas de segurança.
+O **DeskAI Chatbot** é um assistente de IA pensado para rodar no desktop e ajudar o usuário em tarefas do dia a dia, inclusive executando comandos no terminal por conta própria, com camadas de segurança.
 
-O projeto é dividido em duas partes:
+O projeto é dividido em duas partes, cada uma com documentação de arquitetura própria:
 
-- **Backend (Python):** orquestra a comunicação com os modelos de linguagem, decide quanto "esforço de raciocínio" cada mensagem exige e executa comandos de shell por meio de um agente com ferramentas (*tool calling*).
-- **Frontend (React + TypeScript):** interface de chat, construída com Vite.
+- **[Backend (Python)](./backend/README.md):** orquestra a comunicação com os modelos de linguagem, decide quanto "esforço de raciocínio" cada mensagem exige e executa comandos de shell por meio de um agente com ferramentas (*tool calling*).
+- **[Frontend (React + TypeScript)](./frontend/README.md):** interface de chat em formato de overlay, construída com Vite.
 
 ---
 
@@ -29,7 +29,7 @@ O projeto é dividido em duas partes:
 
 - 🧠 **Raciocínio adaptativo:** cada mensagem é classificada em quatro níveis de complexidade (`reasoning_off`, `reasoning_low`, `reasoning_high` e `reasoning_max`). O nível escolhido define os parâmetros de raciocínio da resposta, equilibrando custo, velocidade e qualidade.
 - 🤖 **Agente com *tool calling*:** o modelo pode chamar uma ferramenta de terminal (`run_terminal_command`) em um laço de até 8 passos, usando o resultado de cada comando para decidir o próximo passo.
-- ⚡ **Respostas em *streaming*:** a resposta é entregue em tempo real, token a token, de forma assíncrona.
+- ⚡ **Respostas diretas e com *streaming*:** o orquestrador oferece resposta simples e resposta em tempo real, token a token.
 - 🛡️ **Política de segurança para o terminal:**
   - Detecta comandos potencialmente destrutivos (`rm -r`, `sudo`, `git push --force`, `git reset --hard`, `format`, `dd`, `shutdown`, entre outros) e **exige confirmação do usuário**.
   - Bloqueia a execução fora do diretório de trabalho permitido.
@@ -37,6 +37,9 @@ O projeto é dividido em duas partes:
 - 🪟🐧 **Multiplataforma:** usa `PowerShell` no Windows e `/bin/sh` em Linux/macOS.
 - 💬 **Gerenciamento de contexto:** mantém uma janela das mensagens mais recentes do histórico para controlar o consumo de tokens.
 - 🔌 **Acesso a vários modelos via OpenRouter:** modelo de chat e modelo de *embeddings* configuráveis em um único lugar.
+- 🖼️ **Captura de tela / imagem:** anexar o que está na tela ao pedido.
+- 💾 **Persistência e memória:** histórico de conversas em banco, preferências de longo prazo e busca semântica com *embeddings*.
+- 🔗 **WebSocket:** mensagens, streaming e pedidos de confirmação em tempo real.
 
 ---
 
@@ -48,6 +51,7 @@ O projeto é dividido em duas partes:
   <img src="https://skillicons.dev/icons?i=python" alt="Python" height="48" />
 </p>
 
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
 ![OpenAI SDK](https://img.shields.io/badge/OpenAI%20SDK-412991?style=for-the-badge&logo=openai&logoColor=white)
 ![LangChain](https://img.shields.io/badge/LangChain-1C3C3C?style=for-the-badge&logo=langchain&logoColor=white)
 ![Pydantic](https://img.shields.io/badge/Pydantic-E92063?style=for-the-badge&logo=pydantic&logoColor=white)
@@ -73,53 +77,42 @@ O projeto é dividido em duas partes:
 
 ---
 
-## 🧩 Arquitetura
+## 🧩 Arquitetura (visão geral)
 
-```
-Desktop-Assistant/
-├── backend/
-│   ├── requirements.txt
-│   └── app/
-│       ├── main.py
-│       ├── api/
-│       │   └── routes_chat.py
-│       ├── db/
-│       │   └── database.py
-│       └── services/
-│           ├── terminal_policy.py      # Regras de segurança e confirmação de comandos
-│           ├── terminal_service.py     # Execução assíncrona de comandos (sessão de terminal)
-│           └── ai_agent/
-│               ├── models.py           # Clientes, modelos e definição das tools
-│               └── orchestrator.py     # Classificação de raciocínio, streaming e laço do agente
-└── frontend/
-    ├── index.html
-    ├── package.json
-    ├── vite.config.ts
-    └── src/
-        ├── main.tsx
-        └── App.tsx
-```
+Diagrama conceitual do backend, organizado nas camadas do ciclo percepção, decisão e ação.
 
-### Como funciona o fluxo do agente
+Linhas contínuas existem no código hoje. Linhas tracejadas são planejadas. Os itens destacados em vermelho são as camadas de segurança.
 
-1. O usuário envia uma mensagem.
+<img width="2080" height="3292" alt="Arquitetura do DeskAI Chatbot" src="https://github.com/user-attachments/assets/3d2c2d13-b80e-4052-a9fd-c09f52c1af78" />
+
+**Fluxo resumido do agente:**
+
+1. O usuário envia uma mensagem pela interface.
 2. Um classificador (via *function calling*) define o nível de raciocínio necessário.
 3. O modelo responde com os parâmetros de raciocínio correspondentes, em streaming ou em modo agente.
 4. No modo agente, o modelo pode solicitar comandos de terminal, que passam pela **política de segurança** antes de serem executados.
 5. O resultado do comando (status, `exit_code`, `stdout` e `stderr`) volta ao modelo, que decide o próximo passo ou entrega a resposta final.
 
+Detalhes de implementação em **[backend/README.md](./backend/README.md)** e **[frontend/README.md](./frontend/README.md)**.
+
 ---
 
-### Diagrama conceitural 
-Diagrama conceitual do backend, organizado nas camadas do ciclo percepção, decisão e ação. Linhas contínuas existem no código hoje. Linhas tracejadas são planejadas.
+## 📁 Estrutura do repositório
 
-<img width="2080" height="3292" alt="Arquitetura_Desktop_Assistant2" src="https://github.com/user-attachments/assets/3d2c2d13-b80e-4052-a9fd-c09f52c1af78" />
+```
+DeskAI-Chatbot/
+├── backend/     # API, orquestrador de IA, agente e execução de terminal
+├── frontend/    # Interface de chat (overlay) em React + Vite
+└── README.md
+```
+
+---
 
 ## 🚀 Como executar
 
 ### Pré-requisitos
 
-- [Python 3.11+](https://www.python.org/downloads/)
+- [Python 3.12+](https://www.python.org/downloads/)
 - [Node.js](https://nodejs.org/) e npm
 - Uma chave de API do [OpenRouter](https://openrouter.ai/)
 
@@ -127,44 +120,40 @@ Diagrama conceitual do backend, organizado nas camadas do ciclo percepção, dec
 
 ```bash
 cd backend
-
-# Crie e ative o ambiente virtual
 python -m venv .venv
-source .venv/bin/activate        # Linux/macOS
 .venv\Scripts\activate           # Windows
-
-# Instale as dependências
-pip install -r requirements.txt
+source .venv/bin/activate        # Linux/macOS
+pip install -e .
+poe backend                      # sobe a API em http://localhost:8000
 ```
 
-Crie um arquivo `.env` dentro de `backend/` com a sua chave:
-
-```env
-OPENROUTER_API_KEY=sua_chave_aqui
-```
+Crie `backend/.env` com `OPENROUTER_API_KEY=sua_chave_aqui`. Passo a passo completo em **[backend/README.md](./backend/README.md)**.
 
 ### Frontend
 
 ```bash
 cd frontend
 npm install
-npm run dev
+npm run dev                      # http://localhost:5173
 ```
 
-A aplicação ficará disponível em `http://localhost:5173`.
+Detalhes e variáveis de ambiente em **[frontend/README.md](./frontend/README.md)**.
 
 ---
 
 ## 🗺️ Roadmap
 
 - [x] Classificação automática do nível de raciocínio
-- [x] Respostas em streaming
+- [x] Respostas diretas e em *streaming* no orquestrador
 - [x] Agente com ferramenta de terminal
 - [x] Política de segurança e confirmação de comandos destrutivos
-- [ ] API de chat (rotas e ponto de entrada do servidor)
+- [x] Sessão de terminal com *timeout* e truncamento de saída
+- [ ] Expor streaming e agente via API (hoje só há `POST /chat`)
+- [ ] Captura de tela / anexo de imagem
+- [ ] Diálogo de confirmação de comandos no frontend
+- [ ] Transporte WebSocket
 - [ ] Persistência do histórico de conversas
-- [ ] Interface de chat no frontend
-- [ ] Busca semântica com *embeddings*
+- [ ] Memória de longo prazo e busca semântica com *embeddings*
 - [ ] Empacotamento como aplicativo desktop
 
 ---

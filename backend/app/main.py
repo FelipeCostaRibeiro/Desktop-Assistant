@@ -10,7 +10,7 @@ load_dotenv()
 
 
 def create_app() -> FastAPI:
-    app = FastAPI(title="Desktop Assistant API")
+    app = FastAPI(title="DeskAI API")
 
     origins = os.getenv("CORS_ORIGINS", "http://localhost:5173")
     app.add_middleware(
